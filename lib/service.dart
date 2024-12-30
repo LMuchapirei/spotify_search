@@ -24,15 +24,11 @@ Future<String?> fetchSpotifyToken(String clientId, String clientSecret) async {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      print(response.body);
       return body['access_token'] as String?;
     } else {
-      print('Failed to get token. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
       return null;
     }
   } catch (e) {
-    print('Error fetching token: $e');
     return null;
   }
 }
