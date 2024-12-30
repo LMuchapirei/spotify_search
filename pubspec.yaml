@@ -39,6 +39,7 @@ dependencies:
   flutter_secure_storage:
   flutter_screenutil:
   envied:
+  fluttertoast: ^8.2.10
 
 dev_dependencies:
   flutter_test:

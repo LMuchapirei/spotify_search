@@ -65,3 +65,4 @@ firebase_app_id_file.json
 
 lib/env/env.g.dart
 .env
+.flutter-plugins-dependencies
