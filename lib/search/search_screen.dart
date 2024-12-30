@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:spotify_search/search/models/simpleAlbumObject.dart';
+import 'package:spotify_search/search/models/simple_album_object.dart';
+import 'package:spotify_search/search/models/simple_artist_object.dart';
 import 'package:spotify_search/search/widgets.dart';
 import 'package:spotify_search/service.dart';
 
@@ -17,7 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   SearchOption selectedCategory = SearchOption.album;
   List<SimplifiedAlbumObject> albums = [];
-
+  List<SimplifiedArtistObject> artists = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -54,14 +55,35 @@ class _SearchScreenState extends State<SearchScreen> {
                        height: 65.w,
                         child:  TextField(
                             onSubmitted: (value) {
+                              if(selectedCategory == SearchOption.album){
                                searchSpotifyAlbum(value, selectedCategory.name)
                                .then((result){
                                   if(result.isValue){
                                       setState(() {
                                         albums = result.asValue!.value;
                                       });
+                                      return;
+                                  } 
+                                  if(result.isError){
+                                      toastInfo(message: "Error : ${result.asError!.error}",textColor: Colors.red);
                                   }
                                });
+                              }
+
+                              if(selectedCategory == SearchOption.artist){
+                                 searchSpotifyArtist(value, selectedCategory.name)
+                                  .then((result){
+                                      if(result.isValue){
+                                          setState(() {
+                                            artists = result.asValue!.value;
+                                          });
+                                          return;
+                                      }
+                                      if(result.isError){
+                                        toastInfo(message: "Error : ${result.asError!.error}",textColor: Colors.red);
+                                      }
+                                  });
+                                  }
                             },
                             textInputAction: TextInputAction.search,
                             decoration: InputDecoration(
@@ -106,8 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   _buildAlbumsResultList(BuildContext context){
-      return Container(
-        child: GridView.builder(
+      return  GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
@@ -124,12 +145,23 @@ class _SearchScreenState extends State<SearchScreen> {
               title: currentAlbum.name!, 
               artists: artists, 
               year: currentAlbum.releaseDate!.substring(0,4));
-           }),
+           }
       );
   }
 
   _buildArtistsResultList(BuildContext context){
-      return Container(color: Colors.red,);
+      return ListView.builder(
+        itemCount: artists.length,
+        itemBuilder: ((context, index) {
+          final currentArtist = artists[index];
+            final firstImage = currentArtist.images?.first;
+           return Padding(
+             padding:  EdgeInsets.symmetric(
+              vertical: 5.h
+             ),
+             child: ArtistCard(imageUrl: firstImage!.url!, name: currentArtist.name!),
+           );
+      }));
   }
 
   Widget _buildSelectionChips(List<String> tabTitle) {
@@ -196,7 +228,6 @@ class CustomSliverHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // Calculate current height based on the shrink offset
     final currentHeight = (maxExtent - shrinkOffset).clamp(minExtent, maxExtent);
 
     return SizedBox(
