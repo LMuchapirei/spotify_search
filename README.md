@@ -12,3 +12,5 @@
 3. Run the following command to generate env.g.dart file inside of lib/env/
     flutter pub run build_runner build --delete-conflicting-outputs
 4. flutter run to get to the search view 
+
+![Screenshot 2024-12-30 at 22 38 42](https://github.com/user-attachments/assets/24e39220-1188-4187-b407-8d9f0251bc12)
