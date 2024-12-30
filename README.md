@@ -1,16 +1,14 @@
 # spotify_search
 
-A new Flutter project.
 
 ## Getting Started
+1. Run flutter pub get in the root of the project in your terminal 
 
-This project is a starting point for a Flutter application.
+2.  Create an env file in the root of the project with 2 keys for your Client Credentials flow auth
 
-A few resources to get you started if this is your first Flutter project:
+    CLIENT_ID = 'yyy-ssksks=dj;
+    CLIENT_SECRET = 'djdjj-dkdkdn sjsjjsf'; 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. Run the following command to generate env.g.dart file inside of lib/env/
+    flutter pub run build_runner build --delete-conflicting-outputs
+4. flutter run to get to the search view 
