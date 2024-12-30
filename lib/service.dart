@@ -1,7 +1,8 @@
 import 'dart:convert'; 
 import 'package:http/http.dart' as http;
-import 'package:spotify_search/search/models/simpleAlbumObject.dart';
+import 'package:spotify_search/search/models/simple_album_object.dart';
 import 'package:async/async.dart';
+import 'package:spotify_search/search/models/simple_artist_object.dart';
 
 import 'global.dart';
 
@@ -68,7 +69,7 @@ Future<Result<List<SimplifiedAlbumObject>>> searchSpotifyAlbum(String searchQuer
   }
 }
 
-Future<Result<List<SimplifiedAlbumObject>>> searchSpotifyArtist(String searchQuery,String searchType) async {
+Future<Result<List<SimplifiedArtistObject>>> searchSpotifyArtist(String searchQuery,String searchType) async {
   const String baseUrl = 'https://api.spotify.com/v1/search';
   try{
   final Uri uri = Uri.parse(baseUrl).replace(
@@ -86,10 +87,10 @@ Future<Result<List<SimplifiedAlbumObject>>> searchSpotifyArtist(String searchQue
   );
   if (response.statusCode == 200) {
     final jsonResponseData = jsonDecode(response.body) as Map<String,dynamic>;
-    final albumsItems = jsonResponseData["albums"]["items"] as List<dynamic>;
-    final albumObjects = albumsItems.map((mapObj) => SimplifiedAlbumObject.fromJson(mapObj)).toList();
+    final artistItems = jsonResponseData["artists"]["items"] as List<dynamic>;
+    final artistsObject = artistItems.map((mapObj) => SimplifiedArtistObject.fromJson(mapObj)).toList();
 
-    return Result.value(albumObjects);
+    return Result.value(artistsObject);
   } else {
     return Result.error(Exception('Failed to fetch data: ${response.statusCode}'));
    
