@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:spotify_search/search/models/simpleAlbumObject.dart';
+import 'package:spotify_search/search/widgets.dart';
+import 'package:spotify_search/service.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -13,7 +16,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
 
   SearchOption selectedCategory = SearchOption.album;
-
+  List<SimplifiedAlbumObject> albums = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,17 @@ class _SearchScreenState extends State<SearchScreen> {
                        width: 270.w,
                        height: 65.w,
                         child:  TextField(
+                            onSubmitted: (value) {
+                               searchSpotifyAlbum(value, selectedCategory.name)
+                               .then((result){
+                                  if(result.isValue){
+                                      setState(() {
+                                        albums = result.asValue!.value;
+                                      });
+                                  }
+                               });
+                            },
+                            textInputAction: TextInputAction.search,
                             decoration: InputDecoration(
                               hintText: 'Artists, albums...',
                               enabledBorder: InputBorder.none, 
@@ -84,15 +98,34 @@ class _SearchScreenState extends State<SearchScreen> {
 
   _showResultsOnSearch(BuildContext context){
       switch (selectedCategory){
-        case SearchOption.artist:
-          return _buildAlbumsResultList(context);
         case SearchOption.album:
+          return _buildAlbumsResultList(context);
+        case SearchOption.artist:
           return _buildArtistsResultList(context);
       }
   }
 
   _buildAlbumsResultList(BuildContext context){
-      return Container(color: Colors.amber,);
+      return Container(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 2 / 3,
+            ),
+           itemCount: albums.length,
+           itemBuilder: (context,index){
+            final currentAlbum = albums[index];
+            final firstImage = currentAlbum.images?.first;
+            final artists = currentAlbum.artists!.map((e) => e.name).join(', ');
+            return AlbumCard(
+              imageUrl: firstImage!.url!, 
+              title: currentAlbum.name!, 
+              artists: artists, 
+              year: currentAlbum.releaseDate!.substring(0,4));
+           }),
+      );
   }
 
   _buildArtistsResultList(BuildContext context){
@@ -183,3 +216,4 @@ enum SearchOption {
   artist,
   album
 }
+
